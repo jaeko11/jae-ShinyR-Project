@@ -1,7 +1,7 @@
 library(shinydashboard)
 library(readr)
 library(shiny)
-read.csv(file = "./NYC_FerryData.csv")
+library(leaflet)
 
 
 shinyUI(dashboardPage(skin = "black",
@@ -9,50 +9,55 @@ shinyUI(dashboardPage(skin = "black",
         titleWidth = 350
         
     ),
+   
     dashboardSidebar(
         width = 350,
         sidebarMenu(
-            menuItem(`Start Station`, tabName = `start`),
-            menuItem(`End Station`, tabName = `end`),
-            menuItem(`Analysis`, tabName = `analysis`)
+            menuItem("Analysis", tabName = "analysis")
         )
         
     ),
+    
+   
     dashboardBody(
-        tabItem(
-            tabItem(tabName = `start`, 
-                    fluidRow(
-                        box(title = h3(`Top NYC Ferry Station`),
-                            leafletOutput(`startmap`, height = 880)),
-                        box(title = `Filter your station`),
-                        sliderInput(inputId = `start_num`,
-                                    label = `Number of Stations`,
-                                    0,50,10))
-            )
-        ),
-        tabItem(tabName = `end`,
+        
+        tabItem(tabName = "analysis",
                 fluidRow(
-                    box(title = h3(`NYC Ferry End Stations`),
-                        leafletOutput(`end_num`,
-                                      label = `Number of NYC End Stations`,
-                                      0,50,10)),
-                    box(title = `Top End Stations`, plotOutput(`top_end`)),
-                    box(title = `Average Number From End Stations (people)`,
-                        plotOutput(`avg_end`))
+                    box(title = "Select the ferry routes to plot",
+                       
+                        checkboxGroupInput(inputId = "ferry_routes",
+                                           label = "Select the ferry routes to plot",
+                                           choices = list("East River" = "East.River",
+                                                          "Rockaway" = "Rockaway",
+                                                          "South Brooklyn" = "South.Brooklyn",
+                                                          "Astoria" = "Astoria",
+                                                          "Soundview" = "Soundview",
+                                                          "Lower East Side" = "Lower.East.Side"),
+                                           selected = unique(ferry_dat_long$name))),
+                    
+                    box(title = h3("Boxplot of Ferry Total Weekly Riders"),
+                        plotOutput("ferry_boxplots")),
+
+                    
+                    box(title = h3("Proportion of riders yearly"),
+                        plotOutput("yearlyriderchart"))
+                   
+                    
                     
                 )
-        ),
-        tabItem(tabName = `analysis`,
-                fluidRow(
-                    box(title = h3(`Average Number of Riders in Months`),
-                        plotOutput(`avg_months`)),
-                    box(title = h3(`Average of Riders in Weeks`),
-                        plotOutput(`ave_weeks`))
-                )
                 
-        )    
+        )
         
-    )))
+    )))    
+                    
+                    
+                    
+                    
+                
+                
+          
+        
+    
 
 
 
